@@ -1,63 +1,73 @@
-Bien sûr! Voici un exemple de `README.md` pour votre projet `Teams-Summarizer` :
-
----
-
 # Teams-Summarizer
 
-`Teams-Summarizer` est une application conçue pour résumer les transcriptions de vidéo issues de Microsoft Teams. Grâce à l'IA, elle génère des résumés concis des réunions et fournit une analyse de sentiment basée sur les transcriptions fournies au format VTT.
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
-## Caractéristiques
+**Teams-Summarizer** est une application qui permet de générer automatiquement des résumés à partir de fichiers VTT, généralement utilisés pour stocker des sous-titres ou des transcriptions. Conçu pour aider à résumer rapidement les longues conversations ou réunions, cet outil offre à la fois une interface utilisateur web simple et une interface en ligne de commande.
 
-- **Résumé automatique**: Convertit des transcriptions d'une heure en résumés concis.
-- **Analyse de sentiment**: Offre un aperçu du sentiment général de la réunion.
-- **Intégration à Microsoft Teams**: Facilite l'extraction des transcriptions après chaque réunion (à développer).
+## Table des matières
+
+- [Installation](#installation)
+- [Utilisation](#utilisation)
+  - [Web UI](#web-ui)
+  - [Command Line Interface (CLI)](#command-line-interface-cli)
+- [Configuration](#configuration)
+- [License](#license)
+- [Support](#support)
+- [Contribution](#contribution)
 
 ## Installation
 
-### 1. Clonage du répertoire
+1. **Clonez ce dépôt** :
+   
+   ```bash
+   git clone https://github.com/NeilOrley/Teams-Summarizer.git
+   cd Teams-Summarizer
+   ```
 
-```bash
-git clone https://github.com/NeilOrley/Teams-Summarizer.git
-cd Teams-Summarizer
-```
+2. **Installez les dépendances** :
+   
+   Assurez-vous d'avoir Python installé et utilisez la commande suivante pour installer toutes les dépendances nécessaires :
 
-### 2. Configuration de l'environnement virtuel
-
-```bash
-# Créer un environnement virtuel
-python3 -m venv venv
-
-# Activer l'environnement virtuel
-source venv/bin/activate  # Sur Windows, utilisez : venv\Scripts\activate
-```
-
-### 3. Installer les dépendances
-
-```bash
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ## Utilisation
 
-### Génération de résumé
+### Web UI
 
-1. Placez votre fichier `.vtt` dans le répertoire approprié ou spécifiez le chemin d'accès.
-2. Exécutez le script principal:
+Pour démarrer l'interface utilisateur web :
 
 ```bash
-python main.py --file_path=path_to_vtt_file.vtt
+python app.py
 ```
 
-3. L'application générera un résumé et affichera également l'analyse de sentiment.
+Cela lancera un serveur web local. Vous pouvez accéder à l'application via votre navigateur à l'adresse `http://localhost:5000`.
 
-## Contribution
+### Command Line Interface (CLI)
 
-Les contributions sont les bienvenues! Veuillez consulter [CONTRIBUTING.md](CONTRIBUTING.md) pour plus de détails.
+Pour utiliser l'application en ligne de commande :
 
-## Licence
+```bash
+python cli_summarize.py --file_path=path_to_vtt_file.vtt
+```
+
+### Configuration
+
+Pour que l'application fonctionne, vous devez disposer d'une clé API OpenAI. Une fois que vous avez votre clé, veuillez la configurer dans le fichier `config.ini`.
+
+## License
 
 Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
 
----
+## Support
 
-C'est un exemple de base, vous pouvez ajouter plus de détails, des captures d'écran, etc., pour enrichir votre `README.md`. Assurez-vous également de créer des fichiers supplémentaires comme `CONTRIBUTING.md` si vous y faites référence.
+Aucun support n'est assuré pour cette application. Cependant, vous pouvez toujours ouvrir des [issues](https://github.com/NeilOrley/Teams-Summarizer/issues) sur GitHub si vous rencontrez des problèmes ou si vous avez des suggestions.
+
+## Contribution
+
+Les contributions sont les bienvenues ! N'hésitez pas à ouvrir des pull requests ou à soumettre des issues sur [GitHub](https://github.com/NeilOrley/Teams-Summarizer).
+
+> ---
+>
+> _Note : Ce texte a été généré avec l'aide de ChatGPT, un modèle linguistique développé par OpenAI._
