@@ -1,0 +1,4 @@
+[DEFAULT]
+REQUESTS_CA_BUNDLE = ""
+OPENAI_API_KEY = sk-sdfsdsvsvxvxvxvfsvsvssvsdsvsd
+MAX_MESSAGE_SIZE = 14000

@@ -1,0 +1,18 @@
+# Bibliothèques pour la gestion de WebVTT
+webvtt-py
+
+# Bibliothèques pour le traitement des modèles
+transformers
+torch==1.9.1
+sentencepiece
+openai
+tiktoken
+
+# Bibliothèques pour le serveur 
+flask
+flask-cors
+Flask-SocketIO
+eventlet
+
+# Autres dépendances utiles
+#requests==2.26.0

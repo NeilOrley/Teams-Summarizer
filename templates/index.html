@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File and View Summary</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Upload File</div>
+                    <div class="card-body">
+                        <form action="/" method="POST" enctype="multipart/form-data" id="upload-form">
+                            <div class="form-group">
+                                <input type="file" name="file" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Upload and Process</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="loading" style="display: none;" class="mt-3">
+                    <p>Processing...</p>
+                    <div class="progress">
+                        <div id="progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+
+                {% if summary %}
+                <div class="card mt-3">
+                    <div class="card-header">Summary</div>
+                    <div class="card-body">
+                        <p>{{ summary }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- Socket.io -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script type="text/javascript">
+        var socket = io.connect('http://127.0.0.1:5000');
+        socket.on('connect', function() {
+            socket.emit('message', {data: 'I\'m connected!'});
+        });
+        socket.on('response', function(data) {
+            console.log(data.data);
+        });
+    </script>
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $("#upload-form").submit(function() {
+            // Montrer la barre de chargement
+            $("#loading").show();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,8 @@
+/__pycache__/
+caadmin.netskope.com.crt
+/venv/
+/certs/
+/vtt_files/*
+/clean_files/*
+/summary/*
+config.ini
