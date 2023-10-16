@@ -1,13 +1,15 @@
 # Teams-Summarizer
 
+- [French version](README_FR.md)
+
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
-**Teams-Summarizer** est une application qui permet de générer automatiquement des résumés à partir de fichiers VTT, généralement utilisés pour stocker des sous-titres ou des transcriptions. Conçu pour aider à résumer rapidement les longues conversations ou réunions, cet outil offre à la fois une interface utilisateur web simple et une interface en ligne de commande.
+**Teams-Summarizer** is an application that allows for automatic generation of summaries from VTT files, commonly used to store subtitles or transcriptions. Designed to help quickly summarize long conversations or meetings, this tool offers both a simple web user interface and a command-line interface.
 
-## Table des matières
+## Table of Contents
 
 - [Installation](#installation)
-- [Utilisation](#utilisation)
+- [Usage](#usage)
   - [Web UI](#web-ui)
   - [Command Line Interface (CLI)](#command-line-interface-cli)
 - [Configuration](#configuration)
@@ -17,36 +19,36 @@
 
 ## Installation
 
-1. **Clonez ce dépôt** :
+1. **Clone this repository**:
    
    ```bash
    git clone https://github.com/NeilOrley/Teams-Summarizer.git
    cd Teams-Summarizer
    ```
 
-2. **Installez les dépendances** :
+2. **Install the dependencies**:
    
-   Assurez-vous d'avoir Python installé et utilisez la commande suivante pour installer toutes les dépendances nécessaires :
+   Ensure you have Python installed and use the following command to install all necessary dependencies:
 
    ```bash
    pip install -r requirements.txt
    ```
 
-## Utilisation
+## Usage
 
 ### Web UI
 
-Pour démarrer l'interface utilisateur web :
+To start the web user interface:
 
 ```bash
 python app.py
 ```
 
-Cela lancera un serveur web local. Vous pouvez accéder à l'application via votre navigateur à l'adresse `http://localhost:5000`.
+This will launch a local web server. You can access the application via your browser at `http://localhost:5000`.
 
 ### Command Line Interface (CLI)
 
-Pour utiliser l'application en ligne de commande :
+To use the application via command line:
 
 ```bash
 python cli_summarize.py --file_path=path_to_vtt_file.vtt
@@ -54,20 +56,20 @@ python cli_summarize.py --file_path=path_to_vtt_file.vtt
 
 ### Configuration
 
-Pour que l'application fonctionne, vous devez disposer d'une clé API OpenAI. Une fois que vous avez votre clé, veuillez la configurer dans le fichier `config.ini`.
+For the application to function, you must have an OpenAI API key. Once you have your key, please configure it in the `config.ini` file.
 
 ## License
 
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ## Support
 
-Aucun support n'est assuré pour cette application. Cependant, vous pouvez toujours ouvrir des [issues](https://github.com/NeilOrley/Teams-Summarizer/issues) sur GitHub si vous rencontrez des problèmes ou si vous avez des suggestions.
+No support is provided for this application. However, you can still open [issues](https://github.com/NeilOrley/Teams-Summarizer/issues) on GitHub if you encounter problems or have suggestions.
 
 ## Contribution
 
-Les contributions sont les bienvenues ! N'hésitez pas à ouvrir des pull requests ou à soumettre des issues sur [GitHub](https://github.com/NeilOrley/Teams-Summarizer).
+Contributions are welcome! Don't hesitate to open pull requests or submit issues on [GitHub](https://github.com/NeilOrley/Teams-Summarizer).
 
 > ---
 >
-> _Note : Ce texte a été généré avec l'aide de ChatGPT, un modèle linguistique développé par OpenAI._
+> _Note: This text was generated with the help of ChatGPT, a linguistic model developed by OpenAI._
