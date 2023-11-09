@@ -33,14 +33,16 @@ if __name__ == '__main__':
 
     # Process the source file, format its content, and break it into manageable chunks
     conversation = format_conversation(vtt)    
+    #print(f"format_conversation Output : {conversation}")
 
     # Save the transcript to a file
     save_cleantext_to_file(clean_file, conversation)
 
-    chunks = list(chunk_messages(conversation))
-
+    #chunks = list(chunk_messages(conversation))
+    #print(f"chunk_messages Output : {chunks}")
+    messages = conversation.strip().split('\n')
     # Generate a summary with sentiment analysis for the chunks
-    summary = summarize_and_analyze_sentiment(chunks)
+    summary = summarize_and_analyze_sentiment(messages)
 
     # Save the summary to a file
     save_summary_to_file(filename, summary)

@@ -4,7 +4,6 @@ import tiktoken
 import copy
 from file_utils import save_cleantext_to_file
 import configparser
-import re
 
 # Load configurations from config.ini
 config = configparser.ConfigParser()
@@ -15,7 +14,6 @@ openai.api_key = config['DEFAULT']['OPENAI_API_KEY']
 # Set maximum message size and chunk length from configuration
 MAX_MESSAGE_SIZE = int(config['DEFAULT']['MAX_MESSAGE_SIZE'])
 MAX_CHUNK_LENGTH = MAX_MESSAGE_SIZE / 7
-MAX_RESPONSE_TOKEN = 1000
 
 def format_conversation(vtt):
     """Converts a VTT file to a conversation transcript format and saves it."""
@@ -41,12 +39,10 @@ def format_conversation(vtt):
 
     return transcript
 
-def chunk_messages(text):
+def chunk_messages(messages):
     """Breaks messages into chunks based on a maximum length."""
     chunk = []
-    current_length = 0  
-    messages = text.strip().split('\n')
-    print(f"Messages : {messages}")
+    current_length = 0
 
     for message in messages:
         if current_length + len(message) > MAX_CHUNK_LENGTH:
@@ -99,7 +95,7 @@ def check_payload_size(messages, model="gpt-3.5-turbo-16k"):
             f"""num_tokens_from_messages() is not implemented for model {model}. See https://github.com/openai/openai-python/blob/main/chatml.md for information on how messages are converted to tokens."""
         )
     num_tokens = 0
-    for message in messages:
+    for message in messages['messages']:
         num_tokens += tokens_per_message
         for key, value in message.items():
             num_tokens += len(encoding.encode(value))
@@ -112,49 +108,73 @@ def check_payload_size(messages, model="gpt-3.5-turbo-16k"):
 def summarize_and_analyze_sentiment(chunks,socketio=None,app=None):
     """Summarizes and analyzes sentiment of conversation chunks using OpenAI."""
 
-    system_message = {"role": "system", "content": "Tu es un assistant qui a pour objectif de résumer un échange Teams et d'en dégager \
-                      les idées principales et l'état d'esprit des participants. \
-                      Le format des messages que tu vas recevoir est <orateur>: <message>"}
+    # Initialize counter for excerpts
+    excerpt_counter = 1
     
+    # Define the introduction message
+    base_message = {
+        "role": "system",
+        "content": "Tu vas recevoir plusieurs extraits d'une conversation Teams dont le format est <orateur>: <message>."
+    }
+    
+    # Define the next message structure
+    next_message = {
+        "role": "system",
+        "content": "Ceci est la partie #{excerpt_counter} de la conversation. Peux-tu réaliser un résumé de cet échange?"
+    }
+
+    # Define a sentiment analysis request message
+    sentiment_message = {
+        "role": "user",
+        "content": "Réalise une analyse de sentiment de la conversation?"
+    }
+
     # List to hold all the summaries
     summaries = []
-    conversation_payload = []
-    conversation_payload.append(system_message)
-        
-    test_conversation_payload = conversation_payload
 
-    excerpt_counter=0
+    # Start with a base message as the initial conversation payload
+    conversation_payload = {
+        "messages": [base_message]
+    }
+    
+    test_conversation_payload = conversation_payload
 
     # Loop through each message chunk to generate summaries
     for message in chunks:
         # Check if adding the current message would exceed the token limit
-        if check_payload_size(test_conversation_payload, "gpt-3.5-turbo-16k")  > MAX_MESSAGE_SIZE :
+        if check_payload_size(test_conversation_payload, "gpt-3.5-turbo-16k") > MAX_MESSAGE_SIZE :
             if socketio is not None:
                 with app.app_context():
                     print(app)
                     socketio.emit('response', {'data': f'API Call #{excerpt_counter}. Expected payload {check_payload_size(test_conversation_payload)}!'})                  
-            print(f"API Call #{excerpt_counter}. Expected payload {check_payload_size(test_conversation_payload)}!")      
-            excerpt_counter += 1
+            print(f"API Call #{excerpt_counter}. Expected payload {check_payload_size(test_conversation_payload)}!")    
+
+            conversation_payload["messages"].append({
+                "role": "system",
+                "content": f"Ceci est la partie #{excerpt_counter} de la conversation. Peux-tu réaliser un résumé de cet échange?"
+            })  
+
             # Send the current payload to OpenAI for summarization
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo-16k",
-                messages=conversation_payload,
-                temperature=0.7,
-                max_tokens=MAX_RESPONSE_TOKEN,
-                n=10
-            )          
+                messages=conversation_payload["messages"],
+                temperature=0
+            )
+            excerpt_counter += 1
 
             # Extract the summary from the AI's response and append to summaries list
-            #summary = response.choices[0].message["content"].strip()
-            #print(f"Summary : {summary}")
-            #summaries.append(summary)           
+            summary = response.choices[0].message["content"].strip()
+            summaries.append(summary)
 
-            conversation_payload = []
-            conversation_payload.append(system_message)
+            # Reset the conversation payload for the next chunk
+            conversation_payload = {
+                "messages": [next_message]
+            }
+            
             # Add the current message to the new payload
-            conversation_payload.append({
+            conversation_payload["messages"].append({
                 "role": "user",
-                "content": f"{message}"
+                "content": f"Conversation: {message}"
             })
 
             # Copy the current state of the conversation payload for further checks
@@ -162,13 +182,13 @@ def summarize_and_analyze_sentiment(chunks,socketio=None,app=None):
 
         else:
             # If token limit not reached, add the current message to the payload
-            conversation_payload.append({
+            conversation_payload["messages"].append({
                 "role": "user",
-                "content": f"{message}"
+                "content": f"Conversation: {message}"
             })
-            test_conversation_payload.append({
+            test_conversation_payload["messages"].append({
                 "role": "user",
-                "content": f"{message}"
+                "content": f"Conversation: {message}"
             })
 
     # Process the final chunks of conversation
@@ -176,17 +196,37 @@ def summarize_and_analyze_sentiment(chunks,socketio=None,app=None):
         with app.app_context():
             socketio.emit('response', {'data': f'API Call #{excerpt_counter}. Expected payload {check_payload_size(test_conversation_payload)}!'})  
     print(f"API Call #{excerpt_counter}. Expected payload {check_payload_size(test_conversation_payload)}!")
+    conversation_payload["messages"].append({
+        "role": "system",
+        "content": f"Ceci est la partie #{excerpt_counter} de la conversation. Peux-tu réaliser un résumé de cet échange?"
+    }) 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo-16k",
-        messages=conversation_payload,
-        temperature=0.7,
-        max_tokens=MAX_RESPONSE_TOKEN,
-        n=10
+        messages=conversation_payload["messages"],
+        temperature=0
     )
+    excerpt_counter += 1
 
     # Extract the summary from the AI's response for the final chunks
     summary = response.choices[0].message["content"].strip()   
-    print(f"Summary : {summary}")
+    summaries.append(summary)
+
+    # Add sentiment analysis request to the payload
+    test_conversation_payload["messages"].append(sentiment_message)
+    conversation_payload["messages"].append(sentiment_message)
+    if socketio is not None:
+        with app.app_context():
+            socketio.emit('response', {'data': f'Last API Call #{excerpt_counter}. Expected payload {check_payload_size(test_conversation_payload)}!'})  
+    print(f"Last API Call #{excerpt_counter}. Expected payload {check_payload_size(test_conversation_payload)}!")
+    excerpt_counter += 1
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo-16k",
+        messages=conversation_payload["messages"],
+        temperature=0
+    )
+
+    # Extract the sentiment analysis from the AI's response
+    summary = response.choices[0].message["content"].strip()
     summaries.append(summary)
 
     # Combine all generated summaries into one
